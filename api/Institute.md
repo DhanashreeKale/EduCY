@@ -1,4 +1,4 @@
-## EduCy Admin Registration
+## Institute Registration
 
 ```
 PUT educy/institute/api/register
