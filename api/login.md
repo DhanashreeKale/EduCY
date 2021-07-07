@@ -1,4 +1,4 @@
-## Login
+## Login for teachers and students
 
 ### Api
 ```
