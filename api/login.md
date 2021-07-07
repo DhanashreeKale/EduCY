@@ -41,6 +41,7 @@ Code: 200
 ```
 
 ### Error Response
+
 ```
 1. Code: 404
 Content: {error: "User Doesn't Exist"}
