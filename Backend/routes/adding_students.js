@@ -83,18 +83,8 @@ router.post('/send', async (req, res) => {
         uppercase: false,
         numbers: true
       });
-      // console.log(passwords[i]);
-      // try {
-      //   let response = await studentLogin.create({
-      //     student_username: username[i],
-      //     student_password: passwords[i]
-      //   })
-      //   response = await response.save();
-      //   res.send(response);
-      // } catch (error) {
-      //   console.log(error);
-      // }
-      //below code is working but with error
+     
+      //below code is working but with few errors
       console.log(username[i]);
       try {
         const studlog = new studentLogin({
@@ -107,7 +97,7 @@ router.post('/send', async (req, res) => {
           service: 'gmail',
           auth: {
             user: 'educy.official@gmail.com',
-            pass: 'educy@123'
+            pass: '******'
           }
         });
         var subjectForAll = 'EduCy Login Credentials';
