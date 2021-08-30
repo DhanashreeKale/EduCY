@@ -1,17 +1,30 @@
 const { Student, validate } = require('../models/add_student');
-const { studentLogin, validateStudentLogi } = require('../models/student_login');
+const { studentLogin } = require('../models/student_login');
 const nodemailer = require('nodemailer');
 const express = require('express');
 const router = express.Router();
 var generator = require('generate-password');
-const mongoose = require('mongoose');
-var db = mongoose.connection;
 
 router.get('/', async (req, res) => {
   const students = await Student.find();
   res.send(students);
 }); //get method ends here
 
+async function generateUsername(firstname, lastname) {
+  let username;
+  username = "S" + '.' + firstname + lastname;
+  return username;
+}
+
+async function generatePassword() {
+  let password;
+  password = generator.generate({
+    length: 8,
+    uppercase: false,
+    numbers: true
+  });
+  return password;
+}
 router.post('/send', async (req, res) => {
   const { error } = validate(req.body);
   if (error)
@@ -24,108 +37,47 @@ router.post('/send', async (req, res) => {
     phoneNo: req.body.phoneNo
   });
 
+  //Saving a student in the Student collection
   student = await student.save();
-  res.send(student);
 
-  //The below function returns number of entries/ Students from the "Student" collection present in the database 
-  async function numOfDocs() {
-    const student = await Student
-      .count();
-    return student;
-  }
+  //Auto generations of username and password for the newly added student
+  const student_username = await generateUsername(student.firstname, student.lastname);
+  const student_password = await generatePassword();
 
-  //The below function returns object of emails array of Students from the "Student" collection present in the database
-  async function getEmails() {
-    const studentEmails = await Student
-      .find()
-      .select({ email: 1, _id: 0 })
-      .lean();
-    return studentEmails;
-  }
+  // Now save that student into the student_login database
+  const studlog = new studentLogin({
+    student_username: student_username,
+    student_password: student_password
+  });
+  studentLogin.collection.insert(studlog);
 
-  async function getFirstName() {
-    const studFirstName = await Student
-      .find()
-      .select({ firstname: 1, _id: 0 })
-      .lean();
-    return studFirstName;
-  }
+  //Email the auto-generated username and password to that student
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'educy.official@gmail.com',
+      pass: 'educy@123'
+    }
+  });
 
-  async function getLastName() {
-    const studLastName = await Student
-      .find()
-      .select({ lastname: 1, _id: 0 })
-      .lean();
-    return studLastName;
-  }
+  var subjectForAll = 'EduCy Login Credentials';
+  var textForAll = 'Hi ' + student.firstname + '.\nBelow are your login credentials for Educy \n Username:' + student_username + '\n Password:' + student_password;
 
-  async function run() {
-    var emails = await getEmails();
-    var length = await numOfDocs();
-    var first_name = await getFirstName();
-    var last_name = await getLastName();
-    var i;
+  var mailOptions = {
+    from: 'educy.official@gmail.com',
+    to: student.email,
+    subject: subjectForAll,
+    text: textForAll
+  };
 
-    // var pass = generator.generateMultiple(length, {
-    //   length: 8,
-    //   uppercase: false,
-    //   numbers:true
-    // });
-
-    // console.log(pass);
-
-    for (i = 0; i < length; i++) {
-      let username = [];
-      let passwords = [];
-      username[i] = "S" + '.' + first_name[i].firstname + last_name[i].lastname;
-      passwords[i] = generator.generate({
-        length: 8,
-        uppercase: false,
-        numbers: true
-      });
-     
-      //below code is working but with few errors
-      console.log(username[i]);
-      try {
-        const studlog = new studentLogin({
-          student_username: username[i],
-          student_password: passwords[i]
-        });
-        studentLogin.collection.insert(studlog);
-
-        var transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            user: 'educy.official@gmail.com',
-            pass: '******'
-          }
-        });
-        var subjectForAll = 'EduCy Login Credentials';
-        var textForAll = 'Hi ' + first_name[i].firstname + '.\nBelow are your login credentials for Educy \n Username:' + username[i] + '\n Password:' + passwords[i];
-
-        var mailOptions = {
-          from: 'educy.official@gmail.com',
-          to: emails[i].email, //console.log(emails[i].email); successfully works
-          subject: subjectForAll,
-          text: textForAll
-        };
-
-        transporter.sendMail(mailOptions, function (error, info) {
-          if (error) {
-            console.log(error);
-          } else {
-            console.log('Email sent: ' + info.response);
-            res.send('emails are sent');
-          }
-        });
-      }
-      catch (error) {
-        console.log(error);
-      }
-    }//for ends
-  }//function run() ends
-
-  run();
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+  res.status(200).json({ status: "true", msg: "Successfully created the student" });
 }); //post method ends here
 
 router.put('/:id', async (req, res) => {
