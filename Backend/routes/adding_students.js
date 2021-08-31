@@ -61,7 +61,7 @@ router.post('/send', async (req, res) => {
   });
 
   var subjectForAll = 'EduCy Login Credentials';
-  var textForAll = 'Hi ' + student.firstname + '.\nBelow are your login credentials for Educy \n Username:' + student_username + '\n Password:' + student_password;
+  var textForAll = 'Hi ' + student.firstname + ',' + '.\nBelow are your login credentials for Educy \n Username: ' + student_username + '\n Password: ' + student_password;
 
   var mailOptions = {
     from: 'educy.official@gmail.com',
