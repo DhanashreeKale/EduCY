@@ -22,7 +22,7 @@ router.post('/receive', async (req, res) => {
     if (!check)
         res.json({ status: "false", msg: "User doesn't exist." });
     else
-        res.json({ status: "true", msg: "User login succesfull" });
+        res.json({ status: "true", msg: "User login successfull." });
 });
 
 router.put('/:id', async (req, res) => {
