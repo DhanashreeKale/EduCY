@@ -9,39 +9,95 @@ class Login extends Component {
     this.state = {
       username: "",
       password: "",
-      loginErrors: "",
+
+      errors: {},
     };
 
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.changeUsername = this.changeUsername.bind(this);
+    this.changePassword = this.changePassword.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
-  handleChange(event) {
+  validateUsername(value) {
+    let error = null;
+    const usernameRegex = /^(?=[a-zA-Z.]{8,30}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+
+    if (!value) {
+      error = "Username required.";
+    } else if (!usernameRegex.test(value)) {
+      error = "Invalid Username.";
+    }
+
+    return error;
+  }
+
+  changeUsername(event) {
+    const { value } = event.target;
+
+    const errors = this.state.errors;
+    errors.username = this.validateUsername(value);
+
     this.setState({
-      [event.target.name]: event.target.value,
+      username: value,
+      errors,
     });
   }
 
-  handleSubmit(event) {
+  validatePassword(value) {
+    let error = null;
+    const passwordRegex = /^(?=.*[0-9])(?=.*[a-z]).{8,8}$/;
+
+    if (!value) {
+      error = "Password required.";
+    } else if (!passwordRegex.test(value)) {
+      error = "Invalid Password.";
+    }
+
+    return error;
+  }
+
+  changePassword(event) {
+    const { value } = event.target;
+
+    const errors = this.state.errors;
+    errors.password = this.validatePassword(value);
+
+    this.setState({
+      password: value,
+      errors,
+    });
+  }
+
+  onSubmit(event) {
+    event.preventDefault();
+
     const { username, password } = this.state;
-   
+
     const studLog = {
       student_username: username,
-      student_password: password
-    }
-    
-    axios.post("http://localhost:3000/api/students/login/receive", studLog
-    )
+      student_password: password,
+    };
+
+    axios
+      .post("http://localhost:3000/api/students/login/receive", studLog)
       .then((response) => {
-        console.log("res from login", response);
+        console.log("RESPONSE RECEIVED: ", response);
+        alert("Login successful!!!");
       })
       .catch((error) => {
-        console.log("login error", error);
+        console.log("AXIOS ERROR: ", error);
+        alert("Error!!!");
       });
-    event.preventDefault();
+
+    this.setState({
+      username: "",
+      password: "",
+    });
   }
 
   render() {
+    const errors = this.state.errors;
+
     return (
       <>
         <section className="sign-in">
@@ -49,24 +105,28 @@ class Login extends Component {
             <div className="signin-content">
               <div className="signin-image">
                 <figure>
-                  <img src={loginpic} alt="sign up image" />
+                  <img src={loginpic} alt="signupPic" />
                 </figure>
               </div>
               <div className="signin-form">
                 <h2 className="form-title">Login</h2>
-                <form onSubmit={this.handleSubmit} className="register-form">
+                <form onSubmit={this.onSubmit} className="register-form">
                   <div className="form-group">
                     <label htmlFor="username">
                       <i class="zmdi zmdi-account material-icons-name"></i>
                     </label>
                     <input
-                      type="username"
-                      name="username"
+                      type="text"
                       placeholder="Enter Username"
+                      onChange={this.changeUsername}
                       value={this.state.username}
-                      onChange={this.handleChange}
                       required
                     />
+                  </div>
+                  <div>
+                    {errors.username && (
+                      <p style={{ color: "red" }}>{errors.username}</p>
+                    )}
                   </div>
 
                   <div className="form-group">
@@ -75,27 +135,16 @@ class Login extends Component {
                     </label>
                     <input
                       type="password"
-                      name="password"
                       placeholder="Enter Password"
+                      onChange={this.changePassword}
                       value={this.state.password}
-                      onChange={this.handleChange}
                       required
                     />
                   </div>
-
-                  <div className="form-group">
-                    <input
-                      type="checkbox"
-                      name="remember-me"
-                      id="remember-me"
-                      className="agree-term"
-                    />
-                    <label htmlFor="remember-me" className="label-agree-term">
-                      <span>
-                        <span></span>
-                      </span>
-                      Remember me
-                    </label>
+                  <div>
+                    {errors.password && (
+                      <p style={{ color: "red" }}>{errors.password}</p>
+                    )}
                   </div>
 
                   <div class="form-group form-button">
