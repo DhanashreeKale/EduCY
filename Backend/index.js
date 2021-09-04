@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const express = require('express');
 const students = require('./routes/adding_students');
