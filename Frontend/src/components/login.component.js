@@ -82,7 +82,12 @@ class Login extends Component {
       .post("http://localhost:3000/api/students/login/receive", studLog)
       .then((response) => {
         console.log("RESPONSE RECEIVED: ", response);
-        alert("Login successful!!!");
+
+        if (response.data.status === true) {
+          alert("User login successful!!!");
+        } else {
+          alert("User doesn't exist!!!");
+        }
       })
       .catch((error) => {
         console.log("AXIOS ERROR: ", error);
