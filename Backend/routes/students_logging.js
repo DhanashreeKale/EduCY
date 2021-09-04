@@ -20,9 +20,9 @@ router.post('/receive', async (req, res) => {
 
     const check = await studentLogin.collection.findOne({ student_username: studLog.student_username });
     if (!check)
-        res.json({ status: "false", msg: "User doesn't exist." });
+        res.json({ status: false, msg: "User doesn't exist." });
     else
-        res.json({ status: "true", msg: "User login successfull." });
+        res.json({ status: true, msg: "User login successfull." });
 });
 
 router.put('/:id', async (req, res) => {
