@@ -61,7 +61,7 @@ router.post('/send', async (req, res) => {
   });
 
   var subjectForAll = 'EduCy Login Credentials';
-  var textForAll = 'Hi ' + student.firstname + ',' + '.\nBelow are your login credentials for Educy \n Username: ' + student_username + '\n Password: ' + student_password;
+  var textForAll = 'Hi ' + student.firstname + ',' + '.\nBelow are your login credentials for EduCy \n Username: ' + student_username + '\n Password: ' + student_password;
 
   var mailOptions = {
     from: 'educy.official@gmail.com',
@@ -77,7 +77,7 @@ router.post('/send', async (req, res) => {
       console.log('Email sent: ' + info.response);
     }
   });
-  res.status(200).json({ status: "true", msg: "Successfully created the student" });
+  res.status(200).json({ status: "true", msg: "Successfully created the student." });
 }); //post method ends here
 
 router.put('/:id', async (req, res) => {
