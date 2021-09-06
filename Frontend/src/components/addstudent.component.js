@@ -12,6 +12,8 @@ class Signup extends Component {
       lastname: "",
       email: "",
       phoneNo: "",
+
+      errors: {},
     };
 
     this.changeFirstname = this.changeFirstname.bind(this);
@@ -21,27 +23,115 @@ class Signup extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  validateFirstname(value) {
+    let error = null;
+    const firstnameRegex = /^[a-zA-Z]+$/;
+
+    if (!value) {
+      error = "Firstname required.";
+    } else if (!firstnameRegex.test(value)) {
+      error = "Invalid firstname. Must contain alphabets only.";
+    } else if (value.length < 3) {
+      error = "Firstname should contain atleast three characters.";
+    } else if (value.length > 50) {
+      error = "Firstname should not exceed 50 characters.";
+    }
+
+    return error;
+  }
+
   changeFirstname(event) {
+    const { value } = event.target;
+
+    const errors = this.state.errors;
+    errors.firstname = this.validateFirstname(value);
+
     this.setState({
-      firstname: event.target.value,
+      firstname: value,
+      errors,
     });
+  }
+
+  validateLastname(value) {
+    let error = null;
+    const lastnameRegex = /^[a-zA-Z]+$/;
+
+    if (!value) {
+      error = "Lastname required.";
+    } else if (!lastnameRegex.test(value)) {
+      error = "Invalid Lastname. Must contain alphabets only.";
+    } else if (value.length < 3) {
+      error = "Lastname should contain atleast three characters.";
+    } else if (value.length > 50) {
+      error = "Lastname should not exceed 50 characters.";
+    }
+
+    return error;
   }
 
   changeLastname(event) {
+    const { value } = event.target;
+
+    const errors = this.state.errors;
+    errors.lastname = this.validateLastname(value);
+
     this.setState({
-      lastname: event.target.value,
+      lastname: value,
+      errors,
     });
+  }
+
+  validateEmail(value) {
+    let error = null;
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    if (!value) {
+      error = "Email required.";
+    } else if (
+      !emailRegex.test(value) ||
+      value.length < 10 ||
+      value.length > 255
+    ) {
+      error = "Invalid Email.";
+    }
+
+    return error;
   }
 
   changeEmail(event) {
+    const { value } = event.target;
+
+    const errors = this.state.errors;
+    errors.email = this.validateEmail(value);
+
     this.setState({
-      email: event.target.value,
+      email: value,
+      errors,
     });
   }
 
+  validatePhoneNo(value) {
+    let error = null;
+    const phoneNoRegex = /^[0-9\b]+$/;
+    if (!value) {
+      error = "Phone number required.";
+    } else if (!phoneNoRegex.test(value)) {
+      error = "Invalid phone number. Must contain digits only.";
+    } else if (value.length !== 10) {
+      error = "Invalid phone number.";
+    }
+
+    return error;
+  }
+
   changePhoneNo(event) {
+    const { value } = event.target;
+
+    const errors = this.state.errors;
+    errors.phoneNo = this.validatePhoneNo(value);
+
     this.setState({
-      phoneNo: event.target.value,
+      phoneNo: value,
+      errors,
     });
   }
 
@@ -58,9 +148,11 @@ class Signup extends Component {
       .post("http://localhost:3000/api/students/send", registered)
       .then((response) => {
         console.log("RESPONSE RECEIVED: ", response);
+        alert("Student added successfully!!!");
       })
       .catch((err) => {
         console.log("AXIOS ERROR: ", err);
+        alert("Error!!!");
       });
 
     this.setState({
@@ -72,6 +164,8 @@ class Signup extends Component {
   }
 
   render() {
+    const errors = this.state.errors;
+
     return (
       <>
         <section className="signup">
@@ -93,6 +187,11 @@ class Signup extends Component {
                       required
                     />
                   </div>
+                  <div>
+                    {errors.firstname && (
+                      <p style={{ color: "red" }}>{errors.firstname}</p>
+                    )}
+                  </div>
 
                   <div className="form-group">
                     <label htmlFor="lastname">
@@ -105,6 +204,11 @@ class Signup extends Component {
                       value={this.state.lastname}
                       required
                     />
+                  </div>
+                  <div>
+                    {errors.lastname && (
+                      <p style={{ color: "red" }}>{errors.lastname}</p>
+                    )}
                   </div>
 
                   <div className="form-group">
@@ -119,6 +223,11 @@ class Signup extends Component {
                       required
                     />
                   </div>
+                  <div>
+                    {errors.email && (
+                      <p style={{ color: "red" }}>{errors.email}</p>
+                    )}
+                  </div>
 
                   <div className="form-group">
                     <label htmlFor="phone">
@@ -131,6 +240,11 @@ class Signup extends Component {
                       value={this.state.phoneNo}
                       required
                     />
+                  </div>
+                  <div>
+                    {errors.phoneNo && (
+                      <p style={{ color: "red" }}>{errors.phoneNo}</p>
+                    )}
                   </div>
 
                   <div className="form-group form-button">
@@ -145,7 +259,7 @@ class Signup extends Component {
 
               <div className="signup-image">
                 <figure>
-                  <img src={signpic} alt="registration pic" />
+                  <img src={signpic} alt="registrationPic" />
                 </figure>
               </div>
             </div>
