@@ -3,8 +3,8 @@ import loginpic from "../images/signin-image.jpg";
 import axios from "axios";
 
 class Login extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
       username: "",
@@ -73,26 +73,50 @@ class Login extends Component {
 
     const { username, password } = this.state;
 
-    const studLog = {
-      student_username: username,
-      student_password: password,
-    };
+    if (username.startsWith("S") === true) {
+      const studLog = {
+        student_username: username,
+        student_password: password,
+      };
 
-    axios
-      .post("http://localhost:3000/api/students/login/receive", studLog)
-      .then((response) => {
-        console.log("RESPONSE RECEIVED: ", response);
+      axios
+        .post("http://localhost:3000/api/students/login/receive", studLog)
+        .then((response) => {
+          console.log("RESPONSE RECEIVED: ", response);
 
-        if (response.data.status === true) {
-          alert("User login successful!!!");
-        } else {
-          alert("User doesn't exist!!!");
-        }
-      })
-      .catch((error) => {
-        console.log("AXIOS ERROR: ", error);
-        alert("Error!!!");
-      });
+          if (response.data.status === true) {
+            alert("User login successful!!!");
+          } else {
+            alert("User doesn't exist!!!");
+          }
+        })
+        .catch((error) => {
+          console.log("AXIOS ERROR: ", error);
+          alert("Error!!!");
+        });
+    } else {
+      const teachLog = {
+        teacher_username: username,
+        teacher_password: password,
+      };
+
+      axios
+        .post("http://localhost:3000/api/teachers/login/receive", teachLog)
+        .then((response) => {
+          console.log("RESPONSE RECEIVED: ", response);
+
+          if (response.data.status === true) {
+            alert("User login successful!!!");
+            window.location.href("addstudent.component.js");
+          } else {
+            alert("User doesn't exist!!!");
+          }
+        })
+        .catch((error) => {
+          console.log("AXIOS ERROR: ", error);
+          alert("Error!!!");
+        });
+    }
 
     this.setState({
       username: "",
