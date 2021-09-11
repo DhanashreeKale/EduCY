@@ -5,7 +5,7 @@ const router = express.Router();
 router.get('/display', async (req, res) => {
     const courses = await Course.find().sort('course_name');
     res.send(courses);
-});
+});//get method ends here
 
 router.post('/add', async (req, res) => {
     const { error } = validate(req.body);
@@ -17,7 +17,7 @@ router.post('/add', async (req, res) => {
     });
     course = await course.save();
     res.send(course);
-});
+});//post method ends here
 
 router.post('/batch', async (req, res) => {
 
@@ -35,7 +35,7 @@ router.post('/batch', async (req, res) => {
         }
     });
     res.json({ msg: "Batch added successfully" });
-});
+});//post method ends here
 
 router.put('/:id', async (req, res) => {
     const { error } = validate(req.body);
@@ -51,7 +51,7 @@ router.put('/:id', async (req, res) => {
         return res.status(404).json({ msg: "The course with the given Id was not found" });
 
     res.send(course);
-});
+});//put method ends here
 
 router.delete('/:id', async (req, res) => {
     const course = await Course.findByIdAndRemove(req.params.id);
@@ -60,7 +60,7 @@ router.delete('/:id', async (req, res) => {
         return res.status(404).json({ msg: "The course with the given Id was not found" });
 
     res.send(course);
-});
+});//delete method ends here
 
 router.get('/:id', async (req, res) => {
     const course = await Course.findById(req.params.id);
@@ -69,5 +69,5 @@ router.get('/:id', async (req, res) => {
         return res.status(404).json({ msg: "The course with the given Id was not found" });
 
     res.send(course);
-});
+});//get by Id method ends here
 module.exports = router;
