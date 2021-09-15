@@ -26,15 +26,15 @@ router.post('/batch/add', async (req, res) => {
 
     const batchDetails = await Course.updateOne({ _id: req.body.courseId }, {
         $push: {
-            batchDetails: [{
+            batchDetails: {
                 year: req.body.year,
-                // semester: [{
-                //     sem1: req.body.sem1,
-                //     sem2: req.body.sem2,
-                //     sem3: req.body.sem3,
-                //     sem4: req.body.sem4,
-                // }]
-            }]
+                 semester: {
+                     sem1: req.body.sem1,
+                     sem2: req.body.sem2,
+                     sem3: req.body.sem3,
+                     sem4: req.body.sem4,
+                 }
+            }
         }
     });
     res.json({ msg: "Batch added successfully" });
