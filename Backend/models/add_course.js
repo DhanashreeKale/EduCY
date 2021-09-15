@@ -7,18 +7,18 @@ const courseSchema = new mongoose.Schema({
         required: true,
         maxlength: 50
     },
-    batchDetails: [{
+    batchDetails: {
         year: {
             type: String,
             required: true
         },
-        semester: [{
+        semester: {
             sem1: { type: [String] },
             sem2: { type: [String] },
             sem3: { type: [String] },
             sem4: { type: [String] }
-        }]//semester ends here
-    }]//batchDetails ends here
+        }//semester ends here
+    }//batchDetails ends here
 });
 
 const Course = mongoose.model('Course', courseSchema);
