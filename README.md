@@ -1,4 +1,4 @@
-## EduCY
+### EduCY (On-going Masters Project)
 I am one of the Backend Member of EduCy.
 ### About:
 Due to the current Covid-19 situation, online learning is the only way to keep the education system going. Before the crisis there were some processes 
